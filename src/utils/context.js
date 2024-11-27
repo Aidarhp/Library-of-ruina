@@ -24,19 +24,19 @@ const Context = (props) => {
       .catch((error) => setProducts({ ...products, error: error }));
   };
 
-  const getProfile = () => {
-    axios(`http://localhost:3001/api/auth/profile/`)
-      .then(({ data }) => setProfile({ ...profile, data: data }))
-      .catch((error) => setProfile({ ...profile, error: error }));
-  };
+  // const getProfile = () => {
+  //   axios(`http://localhost:3001/profile`)
+  //     .then(({ data }) => setProfile({ ...profile, data: data }))
+  //     .catch((error) => setProfile({ ...profile, error: error }));
+  // };
 
   useEffect(() => {
     getProducts();
   }, [searchQuery]);
 
-  useEffect(() => {
-    getProfile();
-  }, []);
+  // useEffect(() => {
+  //   getProfile();
+  // }, []);
 
   const changeGenre = (value) => {
     setGenre(value);
@@ -56,7 +56,7 @@ const Context = (props) => {
   };
 
   const value = {
-    getProfile,
+    // getProfile,
     getProducts,
     setCheckboxes,
     handlePrevPage,
@@ -70,7 +70,7 @@ const Context = (props) => {
     setCurrentPage,
     currentPage,
     products,
-    profile,
+    // profile,
     checkboxes,
     registrate,
     searchQuery,
