@@ -5,13 +5,20 @@ import { Link } from "react-router";
 
 const Head = () => {
   const [active, setActive] = useState(false);
-  const [exit, setExit] = useState(false);
+  const [exitStates, setExitStates] = useState({});
   const { setSearchQuery, setRegistrate, searchQuery } =
     useContext(CustomContext);
   const [user, setData] = useState([]);
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const toggleExit = (userId) => {
+    setExitStates((prev) => ({
+      ...prev,
+      [userId]: !prev[userId],
+    }));
   };
 
   useEffect(() => {
@@ -30,12 +37,15 @@ const Head = () => {
         method: "DELETE",
       });
       if (response.ok) {
+        setData((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      } else {
         console.log(`User ${userId} has been deleted`);
       }
     } catch (error) {
       console.error("Error deleting user:", error);
     }
   };
+
   return (
     <section className="header">
       <div className="header_container">
@@ -103,9 +113,9 @@ const Head = () => {
 
           {user.length > 0 &&
             user.map((user) => (
-              <li>
+              <li key={user.id}>
                 <div key={user.id} className="header_ul_li-user">
-                  <span className="header_ul_li-user_name"></span>
+                  <span className="header_ul_li-user_name">{user.username}</span>
                   <img
                     className="header_ul_li-user_avatar"
                     src={user.img}
@@ -113,19 +123,19 @@ const Head = () => {
                   />
                   <a
                     href="#"
-                    onClick={() => setExit(!exit)}
+                    onClick={() => toggleExit(user.id)}
                     style={{
-                      transform: `${exit ? "rotate( 90deg)" : "rotate(0)"}`,
+                      transform: `${
+                        exitStates[user.id] ? "rotate( 90deg)" : "rotate(0)"
+                      }`,
                     }}
                   ></a>
                   <form
-                  action="#"
                     style={{
-                      display: `${exit ? "block" : "none"}`,
-                      right: `${exit ? "50px" : "0"}`,
+                      display: `${exitStates[user.id] ? "block" : "none"}`,
                     }}
                   >
-                    <button onClick={() => deleteUser(0)} type="submit">
+                    <button type="button" onClick = {() => deleteUser(user.id)}>
                       Выход
                     </button>
                   </form>

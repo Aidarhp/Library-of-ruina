@@ -77,7 +77,7 @@ const Registrate = () => {
             <form onSubmit={handleSubmit}>
               <div className="registrate__content-img">
                 {selectedImg && (
-                  <img src={URL.createObjectURL(selectedImg)} alt="asasas" />
+                  <img src={URL.createObjectURL(selectedImg)} alt="use" />
                 )}
                 <label>
                   <input
