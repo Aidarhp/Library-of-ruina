@@ -1,0 +1,35 @@
+.card {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  justify-content: space-between;
+  &__block {
+    position: relative;
+    display: block;
+    width: 171px;
+    height: 220px;
+    border-radius: 16px;
+    background-size: 100% 100% !important;
+    margin: 0 20px;
+    margin-bottom: 20px;
+    &-text {
+      position: absolute;
+      bottom: 11px;
+      left: 10px;
+      & h2 {
+        bottom: 62px;
+        left: 10px;
+        color: #fff;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        line-height: 17px;
+        font-weight: 400;
+        margin-bottom: 10px;
+      }
+    }
+    &-title {
+      bottom: 11px;
+      left: 10px;
+      color: #fff;
+    }
+  }
+}
