@@ -1,16 +1,22 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
 export const CustomContext = createContext();
 
 const Context = (props) => {
-const value = {
+  const [registrate, setRegistrate] = useState("log");
+  const [searchQuery, setSearchQuery] = useState("");
 
-}
-return (
+  const value = {
+    setSearchQuery,
+    setRegistrate,
+    registrate,
+    searchQuery
+  };
+  return (
     <CustomContext.Provider value={value}>
-        {props.children}
+      {props.children}
     </CustomContext.Provider>
-);
+  );
 };
 
 export default Context;

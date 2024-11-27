@@ -1,7 +1,41 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import logo from "../../data/headerLogo/Logo.png";
+import { CustomContext } from "../../utils/context";
+import { Link } from "react-router";
+
 const Head = () => {
   const [active, setActive] = useState(false);
+  const [exit, setExit] = useState(false);
+  const { setSearchQuery, setRegistrate, searchQuery } =
+    useContext(CustomContext);
+  const [user, setData] = useState([]);
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch("http://localhost:3001/user");
+      const user = await response.json();
+
+      setData(user);
+    }
+    fetchData();
+  }, []);
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/user/${userId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log(`User ${userId} has been deleted`);
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
   return (
     <section className="header">
       <div className="header_container">
@@ -37,21 +71,67 @@ const Head = () => {
                 </svg>
               </label>
               <input
-              type="text"
-              onFocus={() => setActive(true)}
-              onBlur={() => setActive(false)}
-              id="searc"
-              style={{ paddingLeft: `${active ? "16px" : "50px"}` }}
-              placeholder="Введите текст"
+                type="text"
+                onFocus={() => setActive(true)}
+                onBlur={() => setActive(false)}
+                id="searc"
+                style={{ paddingLeft: `${active ? "16px" : "50px"}` }}
+                placeholder="Введите текст"
               />
             </form>
           </li>
-          <li className="header_ul_li">
-            <div>
-              <input type="button" value="ВОЙТИ" />
-              <input type="button" value="РЕГИСТРАЦИЯ" />
-            </div>
-          </li>
+          {user.length === 0 && (
+            <li className="header_ul_li">
+              <div className="header_ul_li-logout">
+                <button
+                  type="button"
+                  onClick={() => setRegistrate("log")}
+                  className="header_ul_li-logout_in"
+                >
+                  <Link to="/registrate">ВОЙТИ</Link>
+                </button>
+                <button
+                  type="button"
+                  className="header_ul_li-logout_out"
+                  onClick={() => setRegistrate("reg")}
+                >
+                  <Link to="/registrate">РЕГИСТРАЦИЯ</Link>
+                </button>
+              </div>
+            </li>
+          )}
+
+          {user.length > 0 &&
+            user.map((user) => (
+              <li>
+                <div key={user.id} className="header_ul_li-user">
+                  <span className="header_ul_li-user_name"></span>
+                  <img
+                    className="header_ul_li-user_avatar"
+                    src={user.img}
+                    alt="user-avatar"
+                  />
+                  <a
+                    href="#"
+                    onClick={() => setExit(!exit)}
+                    style={{
+                      transform: `${exit ? "rotate( 90deg)" : "rotate(0)"}`,
+                    }}
+                  ></a>
+                  <form
+                  action="#"
+                    style={{
+                      display: `${exit ? "block" : "none"}`,
+                      right: `${exit ? "50px" : "0"}`,
+                    }}
+                  >
+                    <button onClick={() => deleteUser(0)} type="submit">
+                      Выход
+                    </button>
+                  </form>
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
     </section>
