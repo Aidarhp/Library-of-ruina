@@ -16,13 +16,21 @@ const Context = (props) => {
   const endIndex = startIndex + maxItemsToShow;
   const [checkboxes, setCheckboxes] = useState({});
 
+  // const getProducts = () => {
+  //   axios(
+  //     `http://localhost:3001/manga?type=${genre}&search=${searchQuery}`
+  //   )
+  //     .then(({ data }) => setProducts({ ...products, data: data }))
+  //     .catch((error) => setProducts({ ...products, error: error }));
+  // };
   const getProducts = () => {
     axios(
-      `http://localhost:3001/manga?type=${genre}&search=${searchQuery}`
+      `http://localhost:3001/manga?search=${searchQuery}`
     )
       .then(({ data }) => setProducts({ ...products, data: data }))
       .catch((error) => setProducts({ ...products, error: error }));
   };
+  
 
   // const getProfile = () => {
   //   axios(`http://localhost:3001/profile`)
@@ -31,8 +39,17 @@ const Context = (props) => {
   // };
 
   useEffect(() => {
+    console.log("sear",searchQuery);
     getProducts();
   }, [searchQuery]);
+
+  // useEffect(() => {
+  //   if (searchQuery) {
+  //     getProducts();
+  //   } else {
+  //     setProducts({ data: [], error: "" }); // Или можно оставить старые данные, если это необходимо
+  //   }
+  // }, [searchQuery]);
 
   // useEffect(() => {
   //   getProfile();

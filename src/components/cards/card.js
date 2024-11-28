@@ -7,11 +7,15 @@ import { CustomContext } from "../../utils/context";
 
 const Card = ({ products }) => {
   const dispatch = useDispatch();
-  const { endIndex, startIndex } = useContext(CustomContext);
+  const { endIndex, startIndex,searchQuery } = useContext(CustomContext);
+
+  const filteredProducts = products.data.filter((product) =>
+    product.ru_name.toLowerCase().includes(searchQuery.toLowerCase()) // Фильтруем по названию
+  );
 
   return (
     <div className="card">
-      {products.data.slice(startIndex, endIndex).map((product) => (
+      {filteredProducts.slice(startIndex, endIndex).map((product) => (
         <Link
           onClick={() => dispatch(MakeAdd("makeOrder", product))}
           to={`/Info`}

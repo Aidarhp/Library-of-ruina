@@ -60,7 +60,10 @@ const Head = () => {
             </div>
           </li>
           <li className="header_ul_li">
-            <form className="header_ul_li-search">
+            <form
+              className="header_ul_li-search"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <label
                 className={`header_ul_li-search_loupe ${
                   active ? "active" : ""
@@ -81,10 +84,12 @@ const Head = () => {
                 </svg>
               </label>
               <input
-                type="text"
                 onFocus={() => setActive(true)}
                 onBlur={() => setActive(false)}
-                id="searc"
+                onChange={handleSearch}
+                value={searchQuery}
+                id="search"
+                type="text"
                 style={{ paddingLeft: `${active ? "16px" : "50px"}` }}
                 placeholder="Введите текст"
               />
@@ -115,7 +120,9 @@ const Head = () => {
             user.map((user) => (
               <li key={user.id}>
                 <div key={user.id} className="header_ul_li-user">
-                  <span className="header_ul_li-user_name">{user.username}</span>
+                  <span className="header_ul_li-user_name">
+                    {user.username}
+                  </span>
                   <img
                     className="header_ul_li-user_avatar"
                     src={user.img}
@@ -135,7 +142,7 @@ const Head = () => {
                       display: `${exitStates[user.id] ? "block" : "none"}`,
                     }}
                   >
-                    <button type="button" onClick = {() => deleteUser(user.id)}>
+                    <button type="button" onClick={() => deleteUser(user.id)}>
                       Выход
                     </button>
                   </form>
