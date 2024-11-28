@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import LazyLoad from "react-lazyload";
 import Card from "../../components/cards/card";
 import SideBarItem from "../../components/sideBarItem/sideBarItem";
 import arrow from "../../data/catalog/Arrow.svg";

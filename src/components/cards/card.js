@@ -9,38 +9,55 @@ import placeImg from "../../data/assets/PLaceHolder.jpeg";
 const Card = ({ products }) => {
   const dispatch = useDispatch();
   const { endIndex, startIndex, searchQuery } = useContext(CustomContext);
-  const [images, setImages] = useState({});
+  const [images, setImages] = useState({}); // Хранит загруженные изображения
+  const loadedImagesRef = React.useRef(new Set()); // Используем ref для хранения загруженных изображений
 
   const filteredProducts = products.data.filter(
     (product) =>
-      product.ru_name.toLowerCase().includes(searchQuery.toLowerCase()) // Фильтруем по названию
+      product.ru_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
-    const newImages = {};
+    const loadImage = (product) => {
+      return new Promise((resolve) => {
+        const img = new Image();
 
-    filteredProducts.forEach((product) => {
-      const img = new Image();
+        img.onload = () => {
+          setImages((prevImages) => ({
+            ...prevImages,
+            [product.id]: product.image,
+          }));
+          loadedImagesRef.current.add(product.id); // Добавляем в загруженные
+          resolve();
+        };
 
-      img.onload = () => {//создает новый image
-        newImages[product.id] = product.image;
-        setImages((prevImages) => ({
-          ...prevImages,
-          ...newImages,
-        }));
-      };
+        img.onerror = () => {
+          setImages((prevImages) => ({
+            ...prevImages,
+            [product.id]: placeImg,
+          }));
+          loadedImagesRef.current.add(product.id); // Добавляем в загруженные
+          resolve();
+        };
 
-      img.onerror = () => {//при ошибке URL меняет на placeImg
-        newImages[product.id] = placeImg;
-        setImages((prevImages) => ({
-          ...prevImages,
-          ...newImages,
-        }));
-      };
+        img.src = product.image; // Начинаем загрузку
+      });
+    };
 
-      img.src = product.image; // Устанавливаем src для начала загрузки
-    });
-  }, [filteredProducts]); // Зависимость от filteredProducts
+    const loadImages = async () => {
+      const promises = filteredProducts.map((product) => {
+        // Проверяем, загружено ли изображение
+        if (!loadedImagesRef.current.has(product.id)) {
+          return loadImage(product);
+        }
+        return Promise.resolve(); // Если загружено, возвращаем уже разрешенный промис
+      });
+
+      await Promise.all(promises); // Ждем завершения всех загрузок
+    };
+
+    loadImages();
+  }, [filteredProducts]); // Зависимость только от filteredProducts
 
   return (
     <div className="card">
@@ -49,7 +66,7 @@ const Card = ({ products }) => {
 
         return (
           <Link
-            onClick={() => dispatch(MakeAdd("makeOrder", product))}//Link к странице информации
+            onClick={() => dispatch(MakeAdd("makeOrder", product))}
             to={`/Info`}
             className="card__block"
             style={{
