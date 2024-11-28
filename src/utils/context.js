@@ -32,14 +32,13 @@ const Context = (props) => {
   };
   
 
-  // const getProfile = () => {
-  //   axios(`http://localhost:3001/profile`)
-  //     .then(({ data }) => setProfile({ ...profile, data: data }))
-  //     .catch((error) => setProfile({ ...profile, error: error }));
-  // };
+  const getProfile = () => {
+    axios(`http://localhost:3001/profile`)
+      .then(({ data }) => setProfile({ ...profile, data: data }))
+      .catch((error) => setProfile({ ...profile, error: error }));
+  };
 
   useEffect(() => {
-    console.log("sear",searchQuery);
     getProducts();
   }, [searchQuery]);
 
@@ -72,7 +71,12 @@ const Context = (props) => {
     }
   };
 
+  const firstPage = () => {
+    setCurrentPage(1);
+  };
+
   const value = {
+    firstPage,
     // getProfile,
     getProducts,
     setCheckboxes,

@@ -15,6 +15,7 @@ const Catalog = () => {
     endIndex,
     currentPage,
     setCurrentPage,
+    firstPage,
   } = useContext(CustomContext);
   const [show, setShow] = useState(true);
   const { products } = useContext(CustomContext);
@@ -113,6 +114,16 @@ const Catalog = () => {
         </div>
         <div className="catalog__selectore">
           <div className="catalog__selectore-paginate">
+            <button
+            style={{display:`${currentPage !== 1 ? "block" : "none"}`}}
+              disabled={currentPage === 1}
+              onClick={() => {
+                if (currentPage > 1) {
+                  firstPage();
+                }
+              }}
+              className="catalog__selectore-paginate_left"
+            ></button>
             <button
               className="catalog__selectore-paginate_left"
               onClick={handlePrevPage}
