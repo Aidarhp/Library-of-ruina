@@ -23,7 +23,9 @@
       border-radius: 10px;
       padding: 13px 5px;
       &[f="cool"]:is(:active, :hover) {
-        background: rgba(135, 135, 135, 0.2);
+        animation-name: delay;
+        animation-duration: 0.80s;
+        animation-fill-mode: forwards;
       }
       & h2 {
         font-family: "Montserrat", sans-serif;
@@ -169,4 +171,9 @@
 .jarno {
   font-size: 35px !important;
   line-height: 43px !important;
+}
+
+@keyframes delay {
+  from {background: rgba(0,0,0,0);}
+  to {background: rgba(135, 135, 135, 0.2);}
 }
