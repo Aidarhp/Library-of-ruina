@@ -19,25 +19,44 @@ const Info = ({ products }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/comments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: user[0].username,
-          nick: user[0].nick,
-          image: user[0].img,
-          text,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/manga/${products.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comments: [
+              ...products.comments,
+              {
+                id: `comment${Date.now()}`, // Генерация уникального ID
+                name: user[0].username,
+                nick: user[0].nick,
+                image: user[0].img,
+                text,
+              },
+            ],
+          }),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
       const data = await response.json();
       console.log("Comment added:", data);
+  
+      // Обновляем состояние `coment` с новыми данными
+      setComent(data.comments);
+  
+      // Обновляем `products.comments` (если это необходимо)
+      products.comments = data.comments;
+  
+      // Сбрасываем форму
       setComentAdd(!comentAdd);
-      setUsername("");
-      setNick("");
       setText("");
-      setImage("");
     } catch (error) {
       console.error("Comment failed:", error);
     }
@@ -45,33 +64,56 @@ const Info = ({ products }) => {
 
   const deleteComment = async (e) => {
     e.preventDefault();
-    const commentId = e.target.commentId.value; // Получаем ID комментария из скрытого поля
+    const commentId = e.target.commentId.value;
     try {
-      const response = await fetch(`http://localhost:3001/comments/${commentId}`, {
-        method: "DELETE",
-      });
-      
+      const updatedComments = products.comments.filter(
+        (comment) => comment.id !== commentId
+      );
+      const response = await fetch(
+        `http://localhost:3001/manga/${products.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comments: updatedComments,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-  
       const data = await response.json();
       console.log("Comment deleted:", data);
-      setComent((prev) => prev.filter((comment) => comment.id !== commentId)); // Обновляем состояние
+      setComent(updatedComments); // Обновляем состояние coment
+      products.comments = updatedComments; // Синхронизируем с products.comments
     } catch (error) {
       console.error("Comment failed:", error);
     }
   };
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("http://localhost:3001/comments");
-      const coment = await response.json();
-
-      setComent(coment);
+    console.log("Products:", products);
+    console.log("Comments:", products.comments);
+    if (products && products.comments) {
+      setComent(products.comments);
     }
-    fetchData();
-  }, [coment]);
+  }, [products]);
+
+  
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const response = await fetch("http://localhost:3001/comments");
+  //     const coment = await response.json();
+
+  //     setComent(coment);
+  //   }
+  //   fetchData();
+  // }, [
+  //   comentAdd,
+  //   text,
+  // ]);
 
   useEffect(() => {
     async function fetchData() {
@@ -146,21 +188,25 @@ const Info = ({ products }) => {
                   : "добавить комментарий"}
               </button>
             </div>
-            {coment.slice(startIndex, endIndex).map((user) => (
-              <div key={user.id}>
-                <form className="info__comments-com" onSubmit={deleteComment}>
-                  <img src={user.image} alt="Photo" />
-                  <div className="info__comments-com_texts">
-                    <h2>
-                      {user.name}, {user.nick}
-                    </h2>
-                    <p>{user.text}</p>
-                  </div>
-                  <input type="hidden" name="commentId" value={user.id} />
-                  <input type="submit" value="Delete" />
-                </form>
-              </div>
-            ))}
+            {coment && coment.length > 0 ? (
+              coment.slice(startIndex, endIndex).map((user) => (
+                <div key={user.id}>
+                  <form className="info__comments-com" onSubmit={deleteComment}>
+                    <img src={user.image} alt="Photo" />
+                    <div className="info__comments-com_texts">
+                      <h2>
+                        {user.name}, {user.nick}
+                      </h2>
+                      <p>{user.text}</p>
+                    </div>
+                    <input type="hidden" name="commentId" value={user.id} />
+                    <input type="submit" value="Delete" />
+                  </form>
+                </div>
+              ))
+            ) : (
+              <p id="no_text">Нет комментариев</p>
+            )}
             {comentAdd && (
               <div className="info__comments-add">
                 <div className="info__comments-add_main">
